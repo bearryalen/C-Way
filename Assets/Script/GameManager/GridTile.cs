@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
+    // Start is called before the first frame update
+    public Storage pathStorage;
+
     [Header("Grid Size")]
     [SerializeField]public int columns;
     [SerializeField]public int rows;
@@ -18,6 +21,51 @@ public class GridTile : MonoBehaviour
     private Vector2 _offset = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquare = new List<GameObject>();
 
+    private void OnEnable()
+    {
+        Game_Event.checkIfPathCanBePlace += CheckIfPathCanBePlaced;
+    }
+
+    private void OnDisable()
+    {
+        Game_Event.checkIfPathCanBePlace -= CheckIfPathCanBePlaced;
+    }
+
+    private void CheckIfPathCanBePlaced()
+    {
+        var squareIndexs = new List<int>();
+
+        foreach (var square in _gridSquare)
+        {
+            var gridSquare = square.GetComponent<GridSquare>();
+
+            if (gridSquare.Selected && !gridSquare.isOccupied)
+            {
+                squareIndexs.Add(gridSquare.squareIndex);
+                gridSquare.Selected = false;
+                //gridSquare.ActivateSquare();
+            }
+        }
+        var currentSelectedPath = pathStorage.GetCurrentSelectedPath();
+        if (currentSelectedPath == null) return; //there is no path selected, so we cannot place it
+
+        if (currentSelectedPath.TotalSquareNumber == squareIndexs.Count)
+        {
+            foreach (var squareIndex in squareIndexs)
+            {
+                _gridSquare[squareIndex].GetComponent<GridSquare>().PlacePathOnBoard();
+
+            }
+
+            currentSelectedPath.DeactivatePath();
+        }
+        else
+        {
+            Game_Event.MovePathToStartPosition();
+        }
+
+        //pathStorage.GetCurrentSelectedPath().DeactivatePath();
+    }
 
     void Start()
     {
@@ -42,6 +90,7 @@ public class GridTile : MonoBehaviour
             for (var column = 0; column < columns; column++)
             {
                 _gridSquare.Add(Instantiate(gridSquare) as GameObject);
+                _gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>().squareIndex = square_index;
                 _gridSquare[_gridSquare.Count - 1].transform.SetParent(this.transform);
                 _gridSquare[_gridSquare.Count - 1].transform.localScale = new Vector3(squareScale, squareScale, squareScale);
                 _gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>().SetSquareImage(square_index % 2 == 0);
@@ -99,4 +148,6 @@ public class GridTile : MonoBehaviour
     {
         
     }
+
+
 }

@@ -1,20 +1,137 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Path : MonoBehaviour
+public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeginDragHandler , IDragHandler, IEndDragHandler , IPointerDownHandler
 {
     public GameObject squrePathImage;
+    public Vector3 pathSelectedScale;
+    public Vector2 offset = new Vector2(-500, 10f);
 
     [HideInInspector]
     public PathData CurrentPathData;
 
-    private List<GameObject> _currentPath = new List<GameObject>();
+    public int TotalSquareNumber {get; set;}
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private List<GameObject> _currentPath = new List<GameObject>();
+    private Vector3 _pathStartScale;
+    private RectTransform _transform;
+    //private bool _isPathSelected = false;
+    //private bool _pathDraggable = true;
+    private Canvas _canvas;
+    private Vector3 _startPosition;
+    private bool _pathActive = true;
+
+
+    public void Awake()
     {
-        
+        _pathStartScale = this.GetComponent<RectTransform>().localScale;
+        _transform = this.GetComponent<RectTransform>();
+        _canvas = this.GetComponentInParent<Canvas>();
+        //_pathDraggable = true;
+        _startPosition = _transform.localPosition;
+        _pathActive = true;
+    }
+
+    public bool IsOnStartPosition()
+    {
+        return _transform.localPosition == _startPosition;
+    }
+
+    public bool IsAnyOfSquareActive()
+    {
+        foreach (var square in _currentPath)
+        {
+            if (square.gameObject.activeSelf)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void DeactivatePath()
+    {
+        if (_pathActive)
+        {
+            foreach (var square in _currentPath)
+            {
+                square?.GetComponent<PathSquare>().DeactivatePath();
+            }
+        }
+
+        _pathActive = false;
+    }
+
+    public void ActivatePath()
+    {
+        if (!_pathActive)
+        {
+            foreach (var square in _currentPath)
+            {
+                square?.GetComponent<PathSquare>().ActivatePath();
+            }
+        }
+        _pathActive = true;
+    }
+
+
+    public void RequestNewPath(PathData pathData)
+    {
+        _transform.localPosition = _startPosition;
+        CreatePath(pathData);
+    }
+
+    public void CreatePath(PathData pathData)
+    {
+        CurrentPathData = pathData;
+        TotalSquareNumber = GetNumberOfSquaresInPath(pathData);
+
+        while (_currentPath.Count <= TotalSquareNumber)
+        {
+            _currentPath.Add(Instantiate(squrePathImage, transform) as GameObject);
+            //var newSquare = Instantiate(squrePathImage, transform);
+            //_currentPath.Add(newSquare);
+        }
+
+        foreach (var square in _currentPath)
+        {
+            square.gameObject.transform.position = Vector3.zero;
+            square.gameObject.SetActive(false);
+        }
+
+        var squareRect = squrePathImage.GetComponent<RectTransform>();
+        var moveDistance = new Vector2(squareRect.rect.width * squareRect.localScale.x, squareRect.rect.height * squareRect.localScale.y);
+
+        int currentSquareIndexInList = 0;
+
+        // set position to form final Path
+        for (var row = 0; row < pathData.rows; row++)
+        {
+            for (var column = 0; column < pathData.columns; column++)
+            {
+                if (pathData.board[row].columns[column])
+                {
+                    var shiftOnX = GetXPositionForPathSquare(pathData, column, moveDistance);
+                    var shiftOnY = GetYPositionForPathSquare(pathData, row, moveDistance);
+                    _currentPath[currentSquareIndexInList].gameObject.SetActive(true);
+                    _currentPath[currentSquareIndexInList].gameObject.transform.localPosition = new Vector2(shiftOnX, shiftOnY);
+
+                    currentSquareIndexInList++;
+                }
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        Game_Event.MovePathToStartPosition += MovePathToStartPosition; 
+    }
+
+    private void OnDisable()
+    {
+        Game_Event.MovePathToStartPosition -= MovePathToStartPosition; 
     }
 
     private int GetNumberOfSquaresInPath(PathData pathData)
@@ -134,5 +251,50 @@ public class Path : MonoBehaviour
             }
         }
         return shiftOnX;
+    }
+
+
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        this.GetComponent<RectTransform>().localScale = pathSelectedScale;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        _transform.anchorMin = new Vector2(0, 0);
+        _transform.anchorMax = new Vector2(0, 0);
+        _transform.pivot = new Vector2(0, 0);
+
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform, eventData.position, Camera.main, out pos);
+        _transform.localPosition = pos + offset;
+
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        this.GetComponent<RectTransform>().localScale = _pathStartScale;
+        Game_Event.checkIfPathCanBePlace();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        
+    }
+
+    private void MovePathToStartPosition()
+    {
+        _transform.transform.localPosition = _startPosition;
     }
 }

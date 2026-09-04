@@ -1,36 +1,57 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "GridLevel", menuName = "Scriptable Objects/GridLevel")]
 public class GridLevel : ScriptableObject
 {
-    [Header("Grid Size")]
-    public int width = 10;
-    public int height = 10;
-
-    [Header("Grid Reference")]
-    public GridLevel grid;
-
-    private void Awake()
+    [System.Serializable]
+    public class Row
     {
-        //if (grid == null)
-            //grid = GetComponent<GridLevel>();
+        public bool[] columns;
+        private int _size;
+
+        public Row() { }
+
+        public Row(int size)
+        {
+            CreateRow(size);
+        }
+
+        public void CreateRow(int size)
+        {
+            _size = size;
+            columns = new bool[_size];
+            ClearRow();
+        }
+
+        public void ClearRow()
+        {
+            for (int i = 0; i < _size; i++)
+            {
+                columns[i] = false;
+            }
+        }
     }
 
-    public Vector3Int WorldToCell(Vector3 worldPosition)
+
+    public int columns;
+    public int rows;
+    public Row[] board;
+
+    public void Clear()
     {
-        return grid.WorldToCell(worldPosition);
+        for (int i = 0; i < rows; i++)
+        {
+            board[i].ClearRow();
+        }
     }
 
-    public Vector3 GetCellCenter(Vector3Int cellPosition)
+    public void CreateNewBoard()
     {
-        return grid.GetCellCenter(cellPosition);
-    }
-
-    public bool IsInsideGrid(Vector3Int cell)
-    {
-        return cell.x >= 0 &&
-               cell.x < width &&
-               cell.y >= 0 &&
-               cell.y < height;
+        board = new Row[rows];
+        for (var i = 0; i < rows; i++)
+        {
+            board[i] = new Row(columns);
+        }
     }
 }
