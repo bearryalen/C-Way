@@ -86,11 +86,11 @@ GameObject:
   - component: {fileID: 5546800182763196045}
   - component: {fileID: 6447784621434584136}
   - component: {fileID: 1277313117118021983}
-  - component: {fileID: 3760658029551703999}
+  - component: {fileID: 1053228687527727366}
   - component: {fileID: 2272334451660181578}
   - component: {fileID: 2310989074893045368}
   m_Layer: 5
-  m_Name: PathPuzzleImage
+  m_Name: PointDestinateImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,14 +138,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.73631996, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9059099100133156900, guid: a42a536a9d146ce45ab318c756f12d15, type: 3}
+  m_Sprite: {fileID: 2991884015131126524, guid: 4ebc70cb9e9d7854c93365dc1e164830, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3760658029551703999
+--- !u!114 &1053228687527727366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,10 +164,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7669283507131131257}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d2a1b19b8c6be445b635a8981e05ff4, type: 3}
+  m_Script: {fileID: 11500000, guid: 570ae2296f9f11f419ba46217c841134, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PathSquare
-  occupiedImage: {fileID: 9085198986923677177}
+  m_EditorClassIdentifier: Assembly-CSharp::GridPointSquare
+  pointOccupiedImage: {fileID: 1277313117118021983}
 --- !u!50 &2272334451660181578
 Rigidbody2D:
   serializedVersion: 5

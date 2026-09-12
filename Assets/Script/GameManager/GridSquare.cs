@@ -50,7 +50,10 @@ public class GridSquare : MonoBehaviour
             Selected = true;
             hooverImage.gameObject.SetActive(true);
         }
-        Debug.Log("OnTriggerEnter2D");
+        else if (collision.GetComponent<PathSquare>() != null)
+        {
+            collision.GetComponent<PathSquare>().SetOccupied();
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -58,7 +61,10 @@ public class GridSquare : MonoBehaviour
         Selected = true;
         if (isOccupied == false)
             hooverImage.gameObject.SetActive(true);
-        Debug.Log("OnTriggerStay2D");
+        else if (collision.GetComponent<PathSquare>() != null)
+        {
+            collision.GetComponent<PathSquare>().SetOccupied();
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -68,7 +74,10 @@ public class GridSquare : MonoBehaviour
             Selected = false;
             hooverImage.gameObject.SetActive(false);
         }
-        Debug.Log("OnTriggerExit2D");
+        else if (collision.GetComponent<PathSquare>() != null)
+        {
+            collision.GetComponent<PathSquare>().SetUnoccupied();
+        }
     }
 
     public void PlacePathOnBoard()

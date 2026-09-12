@@ -3,20 +3,19 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PathSquare : MonoBehaviour
+public class GridPointSquare : MonoBehaviour
 {
-
-    [SerializeField]public Image occupiedImage;
+    [SerializeField] public Image pointOccupiedImage;
 
     void Start()
     {
-        occupiedImage.gameObject.SetActive(false);
+        pointOccupiedImage.gameObject.SetActive(true);
     }
 
 
     void Update()
     {
-        
+
     }
 
     public void DeactivatePath()
@@ -33,11 +32,11 @@ public class PathSquare : MonoBehaviour
 
     public void SetOccupied()
     {
-        occupiedImage.gameObject.SetActive(true);
+        pointOccupiedImage.gameObject.SetActive(true);
     }
 
     public void SetUnoccupied()
     {
-        occupiedImage.gameObject.SetActive(false);
+        pointOccupiedImage.gameObject.SetActive(false);
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class GridTile : MonoBehaviour
 {
     // Start is called before the first frame update
-    public Storage pathStorage;
+    public PathStorage pathStorage;
 
     [Header("Grid Size")]
     [SerializeField]public int columns;

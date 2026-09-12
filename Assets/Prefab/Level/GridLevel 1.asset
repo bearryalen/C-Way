@@ -10,8 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92ef88e477f27b14e9a94d4709ac8029, type: 3}
-  m_Name: GridLevel
+  m_Name: GridLevel 1
   m_EditorClassIdentifier: Assembly-CSharp::GridLevel
-  columns: 0
-  rows: 0
-  board: []
+  columns: 5
+  rows: 5
+  board:
+  - columns: 0100000000
+  - columns: 0000000000
+  - columns: 0000000000
+  - columns: 0000000000
+  - columns: 0000000001

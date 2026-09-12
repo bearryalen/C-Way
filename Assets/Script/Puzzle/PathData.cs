@@ -33,7 +33,7 @@ public class PathData : ScriptableObject
         }
     }
 
-
+    
     public int columns;
     public int rows;
     public Row[] board;
@@ -54,4 +54,6 @@ public class PathData : ScriptableObject
             board[i] = new Row(columns);
         }
     }
+
+    
 }

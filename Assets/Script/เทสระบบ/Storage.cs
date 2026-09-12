@@ -1,28 +1,28 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Storage : MonoBehaviour
+[CreateAssetMenu(fileName = "Storage", menuName = "Scriptable Objects/Storage")]
+public class Storage : ScriptableObject
 {
     public List<PathData> pathDatas;
     public List<Path> pathList;
 
     void Start()
     {
-
-        // Initialize the pathList with Path components from child objects
-        // Create Path with random Sprawn data from pathDatas
-        foreach ( var path in pathList)
+        int count = Mathf.Min(pathList.Count, pathDatas.Count);
+        for (int i = 0; i < count; i++)
         {
-            // Randomly select a PathData from the pathDatas list
-            var pathIndex = UnityEngine.Random.Range(0, pathDatas.Count);
-            path.CreatePath(pathDatas[pathIndex]);
+            if (pathList[i] != null && pathDatas[i] != null)
+            {
+                pathList[i].CreatePath(pathDatas[i]);
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public Path GetCurrentSelectedPath()
