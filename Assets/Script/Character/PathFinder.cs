@@ -38,7 +38,7 @@ public class PathFinder : MonoBehaviour
         _pathGenerated = false;
     }
 
-    public void FindPath(Vector2 startPosition, Vector2 endPosition)
+    public void FollowedPath(Vector2 startPosition, Vector2 endPosition)
     {
 
     }
