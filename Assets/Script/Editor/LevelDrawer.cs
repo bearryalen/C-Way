@@ -20,9 +20,13 @@ public class LevelDrawer : Editor
         DrawColumnsInputFields();
         EditorGUILayout.Space();
 
+        levelDataInstance.startPoint = EditorGUILayout.Vector2Field("Start Point", levelDataInstance.startPoint);
+        levelDataInstance.endPoint = EditorGUILayout.Vector2Field("End Point", levelDataInstance.endPoint);
+        EditorGUILayout.Space();
         if (levelDataInstance.board != null && levelDataInstance.columns > 0 && levelDataInstance.rows > 0)
         {
             DrawBoardTable();
+            
         }
 
         serializedObject.ApplyModifiedProperties();

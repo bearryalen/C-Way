@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    // ติด Error ไม่สามารถสร้างจุดเริ่มกับจุดสิ้นสุดได้
-    // 
+
     [SerializeField]
     public GridLevel gridLevel;
-    public GameObject squrePointImage; // must be image not game object or else it will not work
+    public GameObject squrePointImage;
     public int TotalPoint { get; set; }
     private List<GameObject> _currentPoint = new List<GameObject>();
 
@@ -22,6 +21,7 @@ public class LevelManager : MonoBehaviour
 
     private Vector2 _offset = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquare = new List<GameObject>();
+
 
     private void OnEnable()
     {
@@ -89,10 +89,24 @@ public class LevelManager : MonoBehaviour
             for (var column = 0; column < gridLevel.columns; column++)
             {
                 _gridSquare.Add(Instantiate(gridSquare) as GameObject);
-                _gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>().squareIndex = square_index;
+
+                GridSquare gridSquareC = _gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>();
+
+                gridSquareC.squareIndex = square_index;
                 _gridSquare[_gridSquare.Count - 1].transform.SetParent(this.transform);
                 _gridSquare[_gridSquare.Count - 1].transform.localScale = new Vector3(squareScale, squareScale, squareScale);
-                //_gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>().SetSquareImage(square_index % 2 == 0);
+                //gridSquareC.SetSquareImage(square_index % 2 == 0);
+
+                if (row == gridLevel.startPoint.x && column == gridLevel.startPoint.y)
+                {
+                    gridSquareC.ActivateSquare();
+                }
+
+                if (row == gridLevel.endPoint.x && column == gridLevel.endPoint.y)
+                {
+                    gridSquareC.ActivateSquare();
+                }
+
                 square_index++;
             }
         }

@@ -15,7 +15,7 @@ public class GridSquare : MonoBehaviour
     public bool Selected { get; set; }
     public int squareIndex { get; set; }
     public bool isOccupied { get; set; }
-    void Start()
+    void Awake()
     {
         Selected = false;
         isOccupied = false;

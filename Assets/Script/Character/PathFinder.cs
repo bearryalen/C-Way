@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class PathFinder : MonoBehaviour
 {
+
     [SerializeField] private bool generatePathOnStart;
+    [SerializeField] GridLevel gridLevel;
 
     private bool _pathGenerated;
     public PathData startDestinate;

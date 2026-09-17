@@ -133,6 +133,7 @@ MonoBehaviour:
   activeImage: {fileID: 4558439899772778288}
   squareSprites:
   - {fileID: 9059099100133156900, guid: a42a536a9d146ce45ab318c756f12d15, type: 3}
+  - {fileID: 9059099100133156900, guid: a42a536a9d146ce45ab318c756f12d15, type: 3}
 --- !u!61 &393542887514982948
 BoxCollider2D:
   m_ObjectHideFlags: 0

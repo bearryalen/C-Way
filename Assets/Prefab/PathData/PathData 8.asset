@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae6704b0098a6bc4a8b817bf7744cfd0, type: 3}
-  m_Name: PathData 7
+  m_Name: PathData 8
   m_EditorClassIdentifier: Assembly-CSharp::PathData
-  columns: 5
-  rows: 5
+  columns: 1
+  rows: 4
   board:
-  - columns: 0001000000
-  - columns: 0100000000
-  - columns: 0000000000
-  - columns: 0100000001
-  - columns: 0000000100
+  - columns: 01
+  - columns: 01
+  - columns: 01
+  - columns: 01

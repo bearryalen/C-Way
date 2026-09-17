@@ -37,6 +37,8 @@ public class GridLevel : ScriptableObject
     public int columns;
     public int rows;
     public Row[] board;
+    public Vector2 startPoint = Vector2.zero;
+    public Vector2 endPoint = Vector2.zero;
 
     public void Clear()
     {

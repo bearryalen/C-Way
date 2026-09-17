@@ -10,7 +10,6 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
     public Vector2 offset = new Vector2(-500, 10f);
     public int costValue;
 
-    [HideInInspector]
     public PathData CurrentPathData;
 
     public int TotalSquareNumber {get; set;}
@@ -115,7 +114,7 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
                 if (pathData.board[row].columns[column])
                 {
                     var shiftOnX = GetXPositionForPathSquare(pathData, column, moveDistance);
-                    var shiftOnY = GetYPositionForPathSquare(pathData, row, moveDistance);
+                    var shiftOnY = GetYPositionForPathSquare(pathData, (pathData.rows - 1) - row, moveDistance);
                     _currentPath[currentSquareIndexInList].gameObject.SetActive(true);
                     _currentPath[currentSquareIndexInList].gameObject.transform.localPosition = new Vector2(shiftOnX, shiftOnY);
 

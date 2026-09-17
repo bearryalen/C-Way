@@ -6,7 +6,6 @@ public class Cost_Value : MonoBehaviour
     [SerializeField] public int maxCost;
     public int currentCost = 0;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
 
