@@ -1166,8 +1166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23405870f7680bd42880d3b156b4f5d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  gridLevel: {fileID: 11400000, guid: fe5834d4b5d1b2b44ad881b201960bba, type: 2}
-  squrePointImage: {fileID: 7669283507131131257, guid: 32717c1aefaad3b4d93e9f06abd72f1a, type: 3}
+  gridLevel: {fileID: 11400000, guid: ad07bfc3fadcb3b4b97136d71975f031, type: 2}
+  areaPointImage: {fileID: 4825155965964728462, guid: 9095f9b27eb68a04683ae28562dd7910, type: 3}
   pathStorage: {fileID: 224934954}
   squaregap: 3
   gridSquare: {fileID: 4825155965964728462, guid: 9095f9b27eb68a04683ae28562dd7910, type: 3}

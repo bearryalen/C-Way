@@ -17,6 +17,8 @@ MonoBehaviour:
   board:
   - columns: 0000000000
   - columns: 0000000000
-  - columns: 0100000001
   - columns: 0000000000
   - columns: 0000000000
+  - columns: 0000000000
+  startPoint: {x: 1, y: 2}
+  endPoint: {x: 4, y: 3}

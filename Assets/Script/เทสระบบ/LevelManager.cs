@@ -48,6 +48,7 @@ public class LevelManager : MonoBehaviour
                 //gridSquare.AreaActive(gridLevel);
             }
         }
+        //เช็คว่าจำนวนช่องที่เลือกตรงกับจำนวนช่องของ path หรือไม่ ถ้าไม่ตรงก็ให้ย้าย path กลับไปที่ตำแหน่งเริ่มต้น
         var currentSelectedPath = pathStorage.GetCurrentSelectedPath();
         if (currentSelectedPath == null) return; //there is no path selected, so we cannot place it
 
@@ -60,6 +61,38 @@ public class LevelManager : MonoBehaviour
             }
 
             currentSelectedPath.DeactivatePath();
+
+
+            // After placing path squares, check whether the occupied squares form a connected path
+            // between start and end points. Start/end mapping: spawn used row == startPoint.x and column == startPoint.y.
+            int rows = gridLevel.rows;
+            int cols = gridLevel.columns;
+
+            // Build occupancy grid from current board state
+            bool[,] occupied = new bool[rows, cols];
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    int idx = r * cols + c;
+                    if (idx >= 0 && idx < _gridSquare.Count)
+                        occupied[r, c] = _gridSquare[idx].GetComponent<GridArea>().isOccupied;
+                }
+            }
+
+            int startRow = Mathf.Clamp((int)gridLevel.startPoint.x, 0, rows - 1);
+            int startColumn = Mathf.Clamp((int)gridLevel.startPoint.y, 0, cols - 1);
+            int endRow = Mathf.Clamp((int)gridLevel.endPoint.x, 0, rows - 1);
+            int endColumn = Mathf.Clamp((int)gridLevel.endPoint.y, 0, cols - 1);
+
+            // Both start and end must be occupied to consider a valid placed path
+            if (occupied[startRow, startColumn] && occupied[endRow, endColumn])
+            {
+                if (IsPathConnected(occupied, startRow, startColumn, endRow, endColumn , rows, cols))
+                {
+                    OnLevelComplete();
+                }
+            }
         }
         else
         {
@@ -67,6 +100,50 @@ public class LevelManager : MonoBehaviour
         }
 
         //pathStorage.GetCurrentSelectedPath().DeactivatePath();
+    }
+
+    // BFS/DFS to determine connectivity between start and end on occupied cells (4-neighbors)
+    private bool IsPathConnected(bool[,] occupied, int startR, int startC, int endR, int endC, int rows, int cols)
+    {
+        var visited = new bool[rows, cols];
+        var queue = new Queue<Vector2Int>();
+        queue.Enqueue(new Vector2Int(startR, startC));
+        visited[startR, startC] = true;
+
+        int[] dr = new int[] { -1, 1, 0, 0 };
+        int[] dc = new int[] { 0, 0, -1, 1 };
+
+        while (queue.Count > 0)
+        {
+            var cur = queue.Dequeue();
+            if (cur.x == endR && cur.y == endC) return true;
+
+            for (int i = 0; i < 4; i++)
+            {
+                int nr = cur.x + dr[i];
+                int nc = cur.y + dc[i];
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols)
+                {
+                    if (!visited[nr, nc] && occupied[nr, nc])
+                    {
+                        visited[nr, nc] = true;
+                        queue.Enqueue(new Vector2Int(nr, nc));
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // Called when level is completed: replace with your win UI / progression logic
+    private void OnLevelComplete()
+    {
+        Debug.Log("Level Complete! Start and End are connected.");
+
+        // Example: make other paths inactive / request next path — optional, adjust to your flow
+        Game_Event.SetPathInactive?.Invoke();
+        Game_Event.RequestNewPath?.Invoke();
     }
 
     void Start()

@@ -36,12 +36,12 @@ public class LevelDrawer : Editor
             EditorUtility.SetDirty(levelDataInstance);
         }
 
-        // inside OnInspectorGUI() after existing UI (for example after DrawBoardTable())
+        /* inside OnInspectorGUI() after existing UI (for example after DrawBoardTable())
         if (GUILayout.Button("Complete Path Between Start/End"))
         {
             levelDataInstance.CompletePathBetweenStartAndEnd(clearBefore: true);
             EditorUtility.SetDirty(levelDataInstance);
-        }
+        }*/
     }
 
     private void ClearBoardButton()
