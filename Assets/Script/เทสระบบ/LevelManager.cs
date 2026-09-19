@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField]
     public GridLevel gridLevel;
-    public GameObject squrePointImage;
+    public GameObject areaPointImage;
     public int TotalPoint { get; set; }
     private List<GameObject> _currentPoint = new List<GameObject>();
 
@@ -39,13 +39,13 @@ public class LevelManager : MonoBehaviour
 
         foreach (var square in _gridSquare)
         {
-            var gridSquare = square.GetComponent<GridSquare>();
+            var gridSquare = square.GetComponent<GridArea>();
 
             if (gridSquare.Selected && !gridSquare.isOccupied)
             {
                 squareIndexs.Add(gridSquare.squareIndex);
                 gridSquare.Selected = false;
-                //gridSquare.ActivateSquare();
+                //gridSquare.AreaActive(gridLevel);
             }
         }
         var currentSelectedPath = pathStorage.GetCurrentSelectedPath();
@@ -55,7 +55,7 @@ public class LevelManager : MonoBehaviour
         {
             foreach (var squareIndex in squareIndexs)
             {
-                _gridSquare[squareIndex].GetComponent<GridSquare>().PlacePathOnBoard();
+                _gridSquare[squareIndex].GetComponent<GridArea>().PlacePathOnBoard();
 
             }
 
@@ -90,7 +90,7 @@ public class LevelManager : MonoBehaviour
             {
                 _gridSquare.Add(Instantiate(gridSquare) as GameObject);
 
-                GridSquare gridSquareC = _gridSquare[_gridSquare.Count - 1].GetComponent<GridSquare>();
+                GridArea gridSquareC = _gridSquare[_gridSquare.Count - 1].GetComponent<GridArea>();
 
                 gridSquareC.squareIndex = square_index;
                 _gridSquare[_gridSquare.Count - 1].transform.SetParent(this.transform);
@@ -99,12 +99,12 @@ public class LevelManager : MonoBehaviour
 
                 if (row == gridLevel.startPoint.x && column == gridLevel.startPoint.y)
                 {
-                    gridSquareC.ActivateSquare();
+                    gridSquareC.AreaActive(0);
                 }
 
                 if (row == gridLevel.endPoint.x && column == gridLevel.endPoint.y)
                 {
-                    gridSquareC.ActivateSquare();
+                    gridSquareC.AreaActive(1);
                 }
 
                 square_index++;
@@ -163,7 +163,7 @@ public class LevelManager : MonoBehaviour
 
         while (_currentPoint.Count <= TotalPoint)
         {
-            _currentPoint.Add(Instantiate(squrePointImage, transform) as GameObject);
+            _currentPoint.Add(Instantiate(areaPointImage, transform) as GameObject);
             //var newSquare = Instantiate(squrePathImage, transform);
             //_currentPath.Add(newSquare);
         }
@@ -174,7 +174,7 @@ public class LevelManager : MonoBehaviour
             square.gameObject.SetActive(false);
         }
 
-        var squareRect = squrePointImage.GetComponent<RectTransform>();
+        var squareRect = areaPointImage.GetComponent<RectTransform>();
         var moveDistance = new Vector2(squareRect.rect.width * squareRect.localScale.x, squareRect.rect.height * squareRect.localScale.y);
 
         int currentSquareIndexInList = 0;
