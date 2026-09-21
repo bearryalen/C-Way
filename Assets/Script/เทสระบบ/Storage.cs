@@ -7,14 +7,50 @@ public class Storage : ScriptableObject
     public List<PathData> pathDatas;
     public List<Path> pathList;
 
+    // Ensure lists are the same size in the editor
+    private void OnValidate()
+    {
+        SyncPathDatasListSize();
+    }
+
+    // Context menu to quickly sync list sizes in the inspector
+    [ContextMenu("Sync PathDatas List Size")]
+    public void SyncPathDatasListSize()
+    {
+        if (pathList == null) pathList = new List<Path>();
+        if (pathDatas == null) pathDatas = new List<PathData>();
+
+        // Expand or shrink pathDatas to match pathList count so indices align in the inspector
+        while (pathDatas.Count < pathList.Count)
+        {
+            pathDatas.Add(null);
+        }
+        while (pathDatas.Count > pathList.Count)
+        {
+            pathDatas.RemoveAt(pathDatas.Count - 1);
+        }
+    }
+
     void Start()
     {
-        int count = Mathf.Min(pathList.Count, pathDatas.Count);
-        for (int i = 0; i < count; i++)
+        // At runtime, try to initialize each Path with its corresponding PathData if available
+        if (pathList == null) return;
+        if (pathDatas == null) pathDatas = new List<PathData>();
+
+        // Make sure lists align
+        SyncPathDatasListSize();
+
+        for (int i = 0; i < pathList.Count; i++)
         {
-            if (pathList[i] != null && pathDatas[i] != null)
+            var path = pathList[i];
+            PathData data = (i < pathDatas.Count) ? pathDatas[i] : null;
+            if (path != null && data != null)
             {
-                pathList[i].CreatePath(pathDatas[i]);
+                path.CreatePath(data);
+            }
+            else if (path != null && data == null)
+            {
+                Debug.LogWarning($"Storage: Path at index {i} has no PathData assigned. Assign a PathData in the Storage inspector or use Sync PathDatas List Size.");
             }
         }
     }

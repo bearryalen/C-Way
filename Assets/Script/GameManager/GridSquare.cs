@@ -45,25 +45,85 @@ public class GridSquare : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(isOccupied == false)
+        var pathSquare = collision.GetComponent<PathSquare>();
+        if (pathSquare != null)
         {
+            // If this grid square is already occupied, mark the path square as occupied
+            if (isOccupied)
+            {
+                pathSquare.SetOccupied();
+                return;
+            }
+
+            // If there is a Path parent, check cost before allowing selection
+            var path = pathSquare.GetComponentInParent<Path>();
+            if (path != null)
+            {
+                var costComp = GameObject.FindObjectOfType<Cost_Value>();
+                if (costComp != null)
+                {
+                    int perSquareCost = 0;
+                    if (path.CurrentPathData != null)
+                        perSquareCost = Mathf.Max(0, path.CurrentPathData.costValue);
+                    if (costComp.currentCost + perSquareCost > costComp.maxCost)
+                    {
+                        // cannot select this square because it would exceed max cost
+                        return;
+                    }
+                }
+            }
+
+            // allow selection
             Selected = true;
             hooverImage.gameObject.SetActive(true);
         }
-        else if (collision.GetComponent<PathSquare>() != null)
+        else
         {
-            collision.GetComponent<PathSquare>().SetOccupied();
+            if (isOccupied == false)
+            {
+                Selected = true;
+                hooverImage.gameObject.SetActive(true);
+            }
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Selected = true;
-        if (isOccupied == false)
-            hooverImage.gameObject.SetActive(true);
-        else if (collision.GetComponent<PathSquare>() != null)
+        var pathSquare = collision.GetComponent<PathSquare>();
+        if (pathSquare != null)
         {
-            collision.GetComponent<PathSquare>().SetOccupied();
+            if (isOccupied)
+            {
+                pathSquare.SetOccupied();
+                return;
+            }
+
+            var path = pathSquare.GetComponentInParent<Path>();
+            if (path != null)
+            {
+                var costComp = GameObject.FindObjectOfType<Cost_Value>();
+                if (costComp != null)
+                {
+                    int perSquareCost = 0;
+                    if (path.CurrentPathData != null)
+                        perSquareCost = Mathf.Max(0, path.CurrentPathData.costValue);
+                    if (costComp.currentCost + perSquareCost > costComp.maxCost)
+                    {
+                        // cannot select this square because it would exceed max cost
+                        return;
+                    }
+                }
+            }
+
+            Selected = true;
+            if (isOccupied == false)
+                hooverImage.gameObject.SetActive(true);
+        }
+        else
+        {
+            Selected = true;
+            if (isOccupied == false)
+                hooverImage.gameObject.SetActive(true);
         }
     }
 

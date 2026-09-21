@@ -37,6 +37,8 @@ public class PathData : ScriptableObject
     public int columns;
     public int rows;
     public Row[] board;
+    // Cost per square for this path data
+    public int costValue = 1;
 
     public void Clear()
     {

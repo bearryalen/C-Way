@@ -9,6 +9,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     public GridLevel gridLevel;
     public GameObject areaPointImage;
+    public GameObject playerPrefab;
+
+    private GameObject currentPlayer;
     public int TotalPoint { get; set; }
     private List<GameObject> _currentPoint = new List<GameObject>();
 
@@ -21,6 +24,68 @@ public class LevelManager : MonoBehaviour
 
     private Vector2 _offset = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquare = new List<GameObject>();
+
+    // Expose grid info for other systems (player, pathfinder)
+    public int Rows => gridLevel != null ? gridLevel.rows : 0;
+    public int Columns => gridLevel != null ? gridLevel.columns : 0;
+    // Return a 2D occupancy map of the current grid squares (rows x columns)
+    public bool[,] GetOccupiedGrid()
+    {
+        int rows = Rows;
+        int cols = Columns;
+        var occupied = new bool[rows, cols];
+
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                int idx = r * cols + c;
+                if (idx >= 0 && idx < _gridSquare.Count)
+                {
+                    bool isOcc = false;
+                    var comps = _gridSquare[idx].GetComponents<Component>();
+                    foreach (var comp in comps)
+                    {
+                        var t = comp.GetType();
+                        var prop = t.GetProperty("isOccupied");
+                        if (prop != null && prop.PropertyType == typeof(bool))
+                        {
+                            isOcc = (bool)prop.GetValue(comp);
+                            break;
+                        }
+                        var field = t.GetField("isOccupied");
+                        if (field != null && field.FieldType == typeof(bool))
+                        {
+                            isOcc = (bool)field.GetValue(comp);
+                            break;
+                        }
+                    }
+                    occupied[r, c] = isOcc;
+                }
+            }
+        }
+
+        return occupied;
+    }
+
+    // Get world/local position for a grid cell (row, col)
+    public Vector3 GetCellWorldPosition(int row, int col)
+    {
+        int cols = Columns;
+        int idx = row * cols + col;
+        if (idx >= 0 && idx < _gridSquare.Count)
+            return _gridSquare[idx].transform.localPosition;
+        return Vector3.zero;
+    }
+
+    // Returns true when grid squares have been spawned and positioned
+    public bool IsGridReady()
+    {
+        int rows = Rows;
+        int cols = Columns;
+        if (rows <= 0 || cols <= 0) return false;
+        return _gridSquare != null && _gridSquare.Count >= rows * cols;
+    }
 
 
     private void OnEnable()
@@ -54,10 +119,31 @@ public class LevelManager : MonoBehaviour
 
         if (currentSelectedPath.TotalSquareNumber == squareIndexs.Count)
         {
+            // Check cost limit before placing
+            var costComp = GameObject.FindObjectOfType<Cost_Value>();
+            int totalCostToAdd = 0;
+            if (currentSelectedPath != null && currentSelectedPath.CurrentPathData != null)
+            {
+                totalCostToAdd = currentSelectedPath.TotalSquareNumber * Mathf.Max(0, currentSelectedPath.CurrentPathData.costValue);
+            }
+
+            if (costComp != null && costComp.currentCost + totalCostToAdd > costComp.maxCost)
+            {
+                // Exceeds budget, reject placement and move path back
+                Game_Event.MovePathToStartPosition();
+                return;
+            }
+
             foreach (var squareIndex in squareIndexs)
             {
                 _gridSquare[squareIndex].GetComponent<GridArea>().PlacePathOnBoard();
 
+            }
+
+            // Update cost
+            if (costComp != null && totalCostToAdd > 0)
+            {
+                costComp.ValueChange(totalCostToAdd);
             }
 
             currentSelectedPath.DeactivatePath();
@@ -144,6 +230,14 @@ public class LevelManager : MonoBehaviour
         // Example: make other paths inactive / request next path — optional, adjust to your flow
         Game_Event.SetPathInactive?.Invoke();
         Game_Event.RequestNewPath?.Invoke();
+
+        if (playerPrefab != null && currentPlayer == null)
+        {
+            currentPlayer = Instantiate(playerPrefab, transform);
+            var playerComp = currentPlayer.GetComponent<Player>();
+            if (playerComp != null) playerComp.Initialize(this);
+        }
+        Game_Event.RequestNewPath?.Invoke(); // remains to trigger movement if you use the event
     }
 
     void Start()

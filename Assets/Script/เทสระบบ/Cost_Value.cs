@@ -24,6 +24,8 @@ public class Cost_Value : MonoBehaviour
 
 
         //TODO if reset == true then currentCost = 0
+
+        Debug.Log("Current Cost: " + currentCost + " / Max Cost: " + maxCost);
     }
 
 

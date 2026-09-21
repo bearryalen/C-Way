@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae6704b0098a6bc4a8b817bf7744cfd0, type: 3}
   m_Name: PathData 7
   m_EditorClassIdentifier: Assembly-CSharp::PathData
-  columns: 5
-  rows: 5
+  columns: 3
+  rows: 3
   board:
-  - columns: 0001000000
-  - columns: 0100000000
-  - columns: 0000000000
-  - columns: 0100000001
-  - columns: 0000000100
+  - columns: 000100
+  - columns: 010100
+  - columns: 000101
+  costValue: 1

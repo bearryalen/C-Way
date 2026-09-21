@@ -8,8 +8,6 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
     public GameObject squrePathImage;
     public Vector3 pathSelectedScale;
     public Vector2 offset = new Vector2(-500, 10f);
-    public int costValue;
-
     public PathData CurrentPathData;
 
     public int TotalSquareNumber {get; set;}
