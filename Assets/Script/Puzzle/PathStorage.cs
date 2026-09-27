@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PathStorage : MonoBehaviour
 {
-    [Tooltip("Optional: reference to Storage ScriptableObject to drive pathList/pathDatas")]
+    [Tooltip("Optional: assigned automatically from LevelManager.LevelStorage")]
     public Storage storageAsset;
 
     public List<PathData> pathDatas = new List<PathData>();

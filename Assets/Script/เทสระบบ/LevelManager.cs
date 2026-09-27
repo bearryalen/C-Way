@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class LevelManager : MonoBehaviour
 {
 
-    [SerializeField]
-    public GridLevel gridLevel;
+    [Header("Level Data")]
+    [SerializeField] private LevelStorage levelStorage;
+    [SerializeField] public GridLevel gridLevel;
     public GameObject areaPointImage;
     public GameObject playerPrefab;
 
@@ -24,6 +25,29 @@ public class LevelManager : MonoBehaviour
 
     private Vector2 _offset = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquare = new List<GameObject>();
+
+    private void Awake()
+    {
+        ApplyLevelStorage();
+    }
+
+    private void ApplyLevelStorage()
+    {
+        // If a LevelStorage asset is assigned, use its GridLevel and PathStorage
+        // This allows you to configure the level in a ScriptableObject and have the LevelManager automatically use it.
+        // If no LevelStorage is assigned, you can manually assign gridLevel and pathStorage in the inspector.
+        // This is useful for testing or for levels that don't use a ScriptableObject.
+        // So you have the flexibility to either use a LevelStorage asset or manually assign the level data in the inspector.
+        if (levelStorage == null)
+            return;
+
+        gridLevel = levelStorage.GridLevel;
+
+        if (pathStorage != null)
+        {
+            pathStorage.storageAsset = levelStorage.PathStorage;
+        }
+    }
 
     // Expose grid info for other systems (player, pathfinder)
     public int Rows => gridLevel != null ? gridLevel.rows : 0;
@@ -248,6 +272,14 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        ApplyLevelStorage();
+
+        if (gridLevel == null)
+        {
+            Debug.LogError("LevelManager: No GridLevel is assigned. Assign a LevelStorage asset or GridLevel.", this);
+            return;
+        }
+
         CreateGrid();
     }
 
