@@ -8,29 +8,17 @@ public class Cost_Value : MonoBehaviour
 
     void Start()
     {
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        //TODO: print( currentcost/maxcost )
-        //
-        if(currentCost >= maxCost)
-        {
-            //TODO cant select more path
-
-        }
-
-
-        //TODO if reset == true then currentCost = 0
-
-        Debug.Log("Current Cost: " + currentCost + " / Max Cost: " + maxCost);
     }
 
 
     public void ValueChange(int value)
     {
         currentCost += value;
+        Debug.Log("Current Cost: " + currentCost + "/" + maxCost);
     }
 }

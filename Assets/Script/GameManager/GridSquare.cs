@@ -15,10 +15,12 @@ public class GridSquare : MonoBehaviour
     public bool Selected { get; set; }
     public int squareIndex { get; set; }
     public bool isOccupied { get; set; }
+    public bool isObstacle { get; private set; }
     void Awake()
     {
         Selected = false;
         isOccupied = false;
+        isObstacle = false;
     }
 
 
@@ -35,6 +37,7 @@ public class GridSquare : MonoBehaviour
         activeImage.gameObject.SetActive(true);
         Selected = true;
         isOccupied = true;
+        isObstacle = false;
     }
     public void SetSquareImage(bool setFirstImage)
     {
@@ -48,6 +51,12 @@ public class GridSquare : MonoBehaviour
         var pathSquare = collision.GetComponent<PathSquare>();
         if (pathSquare != null)
         {
+            if (isObstacle)
+            {
+                pathSquare.SetOccupied();
+                return;
+            }
+
             // If this grid square is already occupied, mark the path square as occupied
             if (isOccupied)
             {
@@ -92,6 +101,12 @@ public class GridSquare : MonoBehaviour
         var pathSquare = collision.GetComponent<PathSquare>();
         if (pathSquare != null)
         {
+            if (isObstacle)
+            {
+                pathSquare.SetOccupied();
+                return;
+            }
+
             if (isOccupied)
             {
                 pathSquare.SetOccupied();
@@ -129,19 +144,33 @@ public class GridSquare : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        var pathSquare = collision.GetComponent<PathSquare>();
+        if (pathSquare != null)
+        {
+            // Always clear the temporary collision image when leaving a cell.
+            // This is especially important for obstacle cells, which are not occupied.
+            pathSquare.SetUnoccupied();
+        }
+
         if (isOccupied == false)
         {
             Selected = false;
             hooverImage.gameObject.SetActive(false);
         }
-        else if (collision.GetComponent<PathSquare>() != null)
-        {
-            collision.GetComponent<PathSquare>().SetUnoccupied();
-        }
     }
 
     public void PlacePathOnBoard()
     {
+        if (isObstacle) return;
         ActivateSquare();
+    }
+
+    public void SetObstacle()
+    {
+        isObstacle = true;
+        Selected = false;
+        isOccupied = false;
+        hooverImage.gameObject.SetActive(false);
+        activeImage.gameObject.SetActive(false);
     }
 }

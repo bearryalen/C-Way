@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Storage
   pathDatas:
   - {fileID: 11400000, guid: 2bba98c395aa13c4b96d61e614a5af99, type: 2}
+  - {fileID: 11400000, guid: be99a94d01c1cd5489191c2f6ef14483, type: 2}
   - {fileID: 11400000, guid: b393827a16f10a64b98d9e229aad64d4, type: 2}
-  - {fileID: 11400000, guid: a345b40fa271c5b47b2f3f0ae26e18aa, type: 2}
   - {fileID: 11400000, guid: 5cb7474db31381748aed24d6a5954248, type: 2}
   pathList:
   - {fileID: 0}

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "GridLevel", menuName = "Scriptable Objects/GridLevel")]
 public class GridLevel : ScriptableObject
@@ -39,6 +40,13 @@ public class GridLevel : ScriptableObject
     public Row[] board;
     public Vector2 startPoint = Vector2.zero;
     public Vector2 endPoint = Vector2.zero;
+    public List<Vector2Int> obstaclePoints = new List<Vector2Int>();
+
+    public bool IsObstacle(int row, int column)
+    {
+        // obstaclePoints use X = column and Y = row
+        return obstaclePoints != null && obstaclePoints.Contains(new Vector2Int(column, row));
+    }
 
     public void Clear()
     {
@@ -90,7 +98,8 @@ public class GridLevel : ScriptableObject
 
         while (true)
         {
-            board[y0].columns[x0] = true;
+            if (!IsObstacle(y0, x0))
+                board[y0].columns[x0] = true;
 
             if (x0 == x1 && y0 == y1) break;
 

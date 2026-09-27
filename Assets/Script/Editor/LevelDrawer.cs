@@ -20,9 +20,13 @@ public class LevelDrawer : Editor
         DrawColumnsInputFields();
         EditorGUILayout.Space();
 
-        levelDataInstance.startPoint = EditorGUILayout.Vector2Field("Start Point", levelDataInstance.startPoint);
-        levelDataInstance.endPoint = EditorGUILayout.Vector2Field("End Point", levelDataInstance.endPoint);
+        levelDataInstance.startPoint = DrawPositivePoint("Start Point", levelDataInstance.startPoint);
+        levelDataInstance.endPoint = DrawPositivePoint("End Point", levelDataInstance.endPoint);
         EditorGUILayout.Space();
+
+        DrawObstaclePoints();
+        EditorGUILayout.Space();
+
         if (levelDataInstance.board != null && levelDataInstance.columns > 0 && levelDataInstance.rows > 0)
         {
             DrawBoardTable();
@@ -50,6 +54,14 @@ public class LevelDrawer : Editor
         {
             levelDataInstance.Clear();
         }
+    }
+
+    private Vector2 DrawPositivePoint(string label, Vector2 point)
+    {
+        point = EditorGUILayout.Vector2Field(label, point);
+        point.x = Mathf.Clamp(Mathf.Round(point.x), 0, Mathf.Max(0, levelDataInstance.columns - 1));
+        point.y = Mathf.Clamp(Mathf.Round(point.y), 0, Mathf.Max(0, levelDataInstance.rows - 1));
+        return point;
     }
 
     private void DrawColumnsInputFields()
@@ -98,6 +110,46 @@ public class LevelDrawer : Editor
             }
 
             EditorGUILayout.EndHorizontal();
+        }
+    }
+
+    private void DrawObstaclePoints()
+    {
+        EditorGUILayout.LabelField("Obstacle Points", EditorStyles.boldLabel);
+
+        if (levelDataInstance.obstaclePoints == null)
+        {
+            levelDataInstance.obstaclePoints = new List<Vector2Int>();
+        }
+
+        EditorGUILayout.HelpBox("Coordinates use X = row and Y = column.", MessageType.Info);
+
+        for (int i = 0; i < levelDataInstance.obstaclePoints.Count; i++)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            var point = levelDataInstance.obstaclePoints[i];
+            point.x = EditorGUILayout.IntField("X", point.x);
+            point.y = EditorGUILayout.IntField("Y", point.y);
+            levelDataInstance.obstaclePoints[i] = point;
+
+            if (GUILayout.Button("-", GUILayout.Width(25)))
+            {
+                levelDataInstance.obstaclePoints.RemoveAt(i);
+                i--;
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        if (GUILayout.Button("Add Obstacle Point"))
+        {
+            levelDataInstance.obstaclePoints.Add(Vector2Int.zero);
+        }
+
+        if (GUILayout.Button("Clear Obstacle Points"))
+        {
+            levelDataInstance.obstaclePoints.Clear();
         }
     }
 

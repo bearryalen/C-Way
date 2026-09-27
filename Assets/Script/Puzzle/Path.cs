@@ -20,6 +20,7 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
     private Canvas _canvas;
     private Vector3 _startPosition;
     private bool _pathActive = true;
+    private bool _blockedByObstacle;
 
 
     public void Awake()
@@ -30,6 +31,7 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
         //_pathDraggable = true;
         _startPosition = _transform.localPosition;
         _pathActive = true;
+        _blockedByObstacle = false;
     }
 
     public bool IsOnStartPosition()
@@ -265,6 +267,7 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        _blockedByObstacle = false;
         this.GetComponent<RectTransform>().localScale = pathSelectedScale;
     }
 
@@ -283,7 +286,24 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
     public void OnEndDrag(PointerEventData eventData)
     {
         this.GetComponent<RectTransform>().localScale = _pathStartScale;
+
+        if (_blockedByObstacle)
+        {
+            Game_Event.MovePathToStartPosition?.Invoke();
+            return;
+        }
+
         Game_Event.checkIfPathCanBePlace();
+    }
+
+    public void MarkBlockedByObstacle()
+    {
+        _blockedByObstacle = true;
+    }
+
+    public bool IsBlockedByObstacle()
+    {
+        return _blockedByObstacle;
     }
 
     public void OnPointerDown(PointerEventData eventData)

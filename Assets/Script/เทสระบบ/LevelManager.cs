@@ -117,6 +117,12 @@ public class LevelManager : MonoBehaviour
         var currentSelectedPath = pathStorage.GetCurrentSelectedPath();
         if (currentSelectedPath == null) return; //there is no path selected, so we cannot place it
 
+        if (currentSelectedPath.IsBlockedByObstacle())
+        {
+            Game_Event.MovePathToStartPosition?.Invoke();
+            return;
+        }
+
         if (currentSelectedPath.TotalSquareNumber == squareIndexs.Count)
         {
             // Check cost limit before placing
@@ -149,8 +155,8 @@ public class LevelManager : MonoBehaviour
             currentSelectedPath.DeactivatePath();
 
 
-            // After placing path squares, check whether the occupied squares form a connected path
-            // between start and end points. Start/end mapping: spawn used row == startPoint.x and column == startPoint.y.
+            // After placing path squares, check whether the occupied squares form a connected path.
+            // Coordinates use X = column and Y = row.
             int rows = gridLevel.rows;
             int cols = gridLevel.columns;
 
@@ -166,10 +172,10 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            int startRow = Mathf.Clamp((int)gridLevel.startPoint.x, 0, rows - 1);
-            int startColumn = Mathf.Clamp((int)gridLevel.startPoint.y, 0, cols - 1);
-            int endRow = Mathf.Clamp((int)gridLevel.endPoint.x, 0, rows - 1);
-            int endColumn = Mathf.Clamp((int)gridLevel.endPoint.y, 0, cols - 1);
+            int startRow = Mathf.Clamp((int)gridLevel.startPoint.y, 0, rows - 1);
+            int startColumn = Mathf.Clamp((int)gridLevel.startPoint.x, 0, cols - 1);
+            int endRow = Mathf.Clamp((int)gridLevel.endPoint.y, 0, rows - 1);
+            int endColumn = Mathf.Clamp((int)gridLevel.endPoint.x, 0, cols - 1);
 
             // Both start and end must be occupied to consider a valid placed path
             if (occupied[startRow, startColumn] && occupied[endRow, endColumn])
@@ -268,14 +274,22 @@ public class LevelManager : MonoBehaviour
                 _gridSquare[_gridSquare.Count - 1].transform.localScale = new Vector3(squareScale, squareScale, squareScale);
                 //gridSquareC.SetSquareImage(square_index % 2 == 0);
 
-                if (row == gridLevel.startPoint.x && column == gridLevel.startPoint.y)
+                bool isStart = row == Mathf.RoundToInt(gridLevel.startPoint.y) && column == Mathf.RoundToInt(gridLevel.startPoint.x);
+                bool isEnd = row == Mathf.RoundToInt(gridLevel.endPoint.y) && column == Mathf.RoundToInt(gridLevel.endPoint.x);
+
+                if (isStart)
                 {
                     gridSquareC.AreaActive(0);
                 }
 
-                if (row == gridLevel.endPoint.x && column == gridLevel.endPoint.y)
+                if (isEnd)
                 {
                     gridSquareC.AreaActive(1);
+                }
+
+                if (!isStart && !isEnd && gridLevel.IsObstacle(row, column))
+                {
+                    gridSquareC.AreaActive(2);
                 }
 
                 square_index++;

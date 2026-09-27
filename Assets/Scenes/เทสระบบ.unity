@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 667b216725ce16943b1573e4078e3840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PathStorage
-  storageAsset: {fileID: 11400000, guid: 5882ff3aba71c8d4986f28a0c8553af1, type: 2}
+  storageAsset: {fileID: 11400000, guid: f4a23244a81a84042998e55446ebc9b8, type: 2}
   pathDatas:
   - {fileID: 0}
   - {fileID: 0}
@@ -681,8 +681,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -699,8 +699,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 62.17
+  m_fontSizeBase: 62.17
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -839,11 +839,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -194
+      value: -231.99997
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 141
+      value: 68
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -959,7 +959,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1075,11 +1075,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 262.00003
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -26
+      value: -99
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1275,11 +1275,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -151
+      value: -188.99997
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -165
+      value: -238
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1372,7 +1372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23405870f7680bd42880d3b156b4f5d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  gridLevel: {fileID: 11400000, guid: d1cf69e80c6ecee478dbce28ae163833, type: 2}
+  gridLevel: {fileID: 11400000, guid: ad07bfc3fadcb3b4b97136d71975f031, type: 2}
   areaPointImage: {fileID: 4825155965964728462, guid: 9095f9b27eb68a04683ae28562dd7910, type: 3}
   playerPrefab: {fileID: 6063543021079570262, guid: 1e418d3e366753647b14b6934cab34e9, type: 3}
   pathStorage: {fileID: 224934954}
@@ -1542,11 +1542,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 254
+      value: 216
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 293
+      value: 220
       objectReference: {fileID: 0}
     - target: {fileID: 6100215227174081979, guid: 0dfe7f6e4a7995641a2e508cfb958ea3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

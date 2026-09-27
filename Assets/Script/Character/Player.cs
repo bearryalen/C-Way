@@ -1,4 +1,3 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,10 +27,10 @@ public class Player : MonoBehaviour
 
         if (rows == 0 || cols == 0) return;
 
-        int startR = Mathf.Clamp((int)levelManager.gridLevel.startPoint.x, 0, rows - 1);
-        int startC = Mathf.Clamp((int)levelManager.gridLevel.startPoint.y, 0, cols - 1);
-        int endR = Mathf.Clamp((int)levelManager.gridLevel.endPoint.x, 0, rows - 1);
-        int endC = Mathf.Clamp((int)levelManager.gridLevel.endPoint.y, 0, cols - 1);
+        int startR = Mathf.Clamp((int)levelManager.gridLevel.startPoint.y, 0, rows - 1);
+        int startC = Mathf.Clamp((int)levelManager.gridLevel.startPoint.x, 0, cols - 1);
+        int endR = Mathf.Clamp((int)levelManager.gridLevel.endPoint.y, 0, rows - 1);
+        int endC = Mathf.Clamp((int)levelManager.gridLevel.endPoint.x, 0, cols - 1);
 
         if (!grid[startR, startC] || !grid[endR, endC])
             return;
@@ -68,8 +67,8 @@ public class Player : MonoBehaviour
         int cols = levelManager.Columns;
         if (rows == 0 || cols == 0) yield break;
 
-        int startR = Mathf.Clamp((int)levelManager.gridLevel.startPoint.x, 0, rows - 1);
-        int startC = Mathf.Clamp((int)levelManager.gridLevel.startPoint.y, 0, cols - 1);
+        int startR = Mathf.Clamp((int)levelManager.gridLevel.startPoint.y, 0, rows - 1);
+        int startC = Mathf.Clamp((int)levelManager.gridLevel.startPoint.x, 0, cols - 1);
 
         transform.SetParent(levelManager.transform);
         transform.localPosition = levelManager.GetCellWorldPosition(startR, startC);

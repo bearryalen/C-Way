@@ -35,6 +35,7 @@ public class GridArea : GridSquare
                 endImage.gameObject.SetActive(true);
                 break;
             case 2:
+                SetObstacle();
                 obstacleImage.gameObject.SetActive(true);
                 break;
         }

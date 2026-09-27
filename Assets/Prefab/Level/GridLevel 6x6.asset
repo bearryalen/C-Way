@@ -23,3 +23,4 @@ MonoBehaviour:
   - columns: 000000000001
   startPoint: {x: 0, y: 0}
   endPoint: {x: 5, y: 5}
+  obstaclePoints: []

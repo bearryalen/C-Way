@@ -31,35 +31,6 @@ public class Storage : ScriptableObject
         }
     }
 
-    void Start()
-    {
-        // At runtime, try to initialize each Path with its corresponding PathData if available
-        if (pathList == null) return;
-        if (pathDatas == null) pathDatas = new List<PathData>();
-
-        // Make sure lists align
-        SyncPathDatasListSize();
-
-        for (int i = 0; i < pathList.Count; i++)
-        {
-            var path = pathList[i];
-            PathData data = (i < pathDatas.Count) ? pathDatas[i] : null;
-            if (path != null && data != null)
-            {
-                path.CreatePath(data);
-            }
-            else if (path != null && data == null)
-            {
-                Debug.LogWarning($"Storage: Path at index {i} has no PathData assigned. Assign a PathData in the Storage inspector or use Sync PathDatas List Size.");
-            }
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public Path GetCurrentSelectedPath()
     {
