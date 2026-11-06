@@ -1,11 +1,46 @@
 using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Storage", menuName = "Scriptable Objects/Storage")]
 public class Storage : ScriptableObject
 {
+    [Header("Path Cost Limit")]
+    [Min(0)] public int maxCost = 100;
+    [System.NonSerialized] private int currentCost;
+
+    public int CurrentCost => currentCost;
+    public int RemainingCost => Mathf.Max(0, maxCost - currentCost);
     public List<PathData> pathDatas;
     public List<Path> pathList;
+
+    public int GetPathCost(Path path)
+    {
+        if (path == null || path.CurrentPathData == null)
+            return 0;
+
+        return path.TotalSquareNumber * Mathf.Max(0, path.CurrentPathData.costValue);
+    }
+
+    public bool CanAfford(Path path)
+    {
+        return currentCost + GetPathCost(path) <= maxCost;
+    }
+
+    public bool TryAddPathCost(Path path)
+    {
+        int cost = GetPathCost(path);
+        if (currentCost + cost > maxCost)
+            return false;
+
+        currentCost += cost;
+        return true;
+    }
+
+    public void ResetCost()
+    {
+        currentCost = 0;
+    }
 
     // Ensure lists are the same size in the editor
     private void OnValidate()

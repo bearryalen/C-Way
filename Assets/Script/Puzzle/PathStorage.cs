@@ -10,9 +10,57 @@ public class PathStorage : MonoBehaviour
 
     public List<PathData> pathDatas = new List<PathData>();
     public List<Path> pathList = new List<Path>();
+    private Path currentSelectedPath;
 
-    void Start()
+    public void SelectPath(Path path)
     {
+        currentSelectedPath = path;
+    }
+
+    public int GetPathCost(Path path)
+    {
+        return storageAsset == null ? 0 : storageAsset.GetPathCost(path);
+    }
+
+    public int CurrentCost => storageAsset == null ? 0 : storageAsset.CurrentCost;
+    public int RemainingCost => storageAsset == null ? 0 : storageAsset.RemainingCost;
+
+    public bool CanAfford(Path path)
+    {
+        return storageAsset != null && storageAsset.CanAfford(path);
+    }
+
+    public bool TryAddPathCost(Path path)
+    {
+        return storageAsset != null && storageAsset.TryAddPathCost(path);
+    }
+
+    public void ResetCost()
+    {
+        if (storageAsset != null)
+            storageAsset.ResetCost();
+    }
+
+    public void ResetPaths()
+    {
+        currentSelectedPath = null;
+
+        foreach (var path in pathList)
+        {
+            if (path != null)
+                path.ResetForReplay();
+        }
+    }
+
+    private void Start()
+    {
+        InitializePaths();
+    }
+
+    public void InitializePaths()
+    {
+        ResetCost();
+        ResetCost();
         // If a Storage asset is assigned, try to use its lists (indices should match)
         if (storageAsset != null)
         {
@@ -91,6 +139,11 @@ public class PathStorage : MonoBehaviour
 
     public Path GetCurrentSelectedPath()
     {
+        // Prefer the path that actually received the drag event. Searching by
+        // list order can deactivate a different path after a reset.
+        if (currentSelectedPath != null && currentSelectedPath.IsAnyOfSquareActive())
+            return currentSelectedPath;
+
         foreach (var path in pathList)
         {
             if (path.IsOnStartPosition() == false && path.IsAnyOfSquareActive())

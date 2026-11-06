@@ -41,6 +41,7 @@ public class Player : MonoBehaviour
         // Place player at start cell
         transform.SetParent(levelManager.transform);
         transform.localPosition = levelManager.GetCellWorldPosition(startR, startC);
+        transform.SetAsLastSibling();
 
         StopAllCoroutines();
         StartCoroutine(MoveAlongPath(path));
@@ -72,6 +73,7 @@ public class Player : MonoBehaviour
 
         transform.SetParent(levelManager.transform);
         transform.localPosition = levelManager.GetCellWorldPosition(startR, startC);
+        transform.SetAsLastSibling();
     }
 
     private List<Vector2Int> FindShortestPath(bool[,] grid, int sr, int sc, int tr, int tc, int rows, int cols)
@@ -134,10 +136,20 @@ public class Player : MonoBehaviour
         }
 
         Debug.Log("Player reached destination.");
+        Game_Event.PlayerReachedDestination?.Invoke();
     }
 
     public void Initialize(LevelManager lm)
     {
         levelManager = lm;
+    }
+
+    public void ResetToStart()
+    {
+        StopAllCoroutines();
+        gameObject.SetActive(true);
+        transform.SetAsLastSibling();
+        if (levelManager != null)
+            StartCoroutine(PlaceAtStartWhenReady());
     }
 }

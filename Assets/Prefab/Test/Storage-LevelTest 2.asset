@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c20faad6a066d0419b824ee7fe6940b, type: 3}
+  m_Name: Storage-LevelTest 2
+  m_EditorClassIdentifier: Assembly-CSharp::Storage
+  maxCost: 10
+  pathDatas:
+  - {fileID: 11400000, guid: 5bd969cc34e541b4c8a58009bc5a961e, type: 2}
+  - {fileID: 11400000, guid: be99a94d01c1cd5489191c2f6ef14483, type: 2}
+  - {fileID: 11400000, guid: ddbd12488549e0940bd71a17865b755a, type: 2}
+  - {fileID: 11400000, guid: 9161fbee7d04fbb4faab369a6590a84a, type: 2}
+  pathList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

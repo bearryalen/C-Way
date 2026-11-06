@@ -68,13 +68,10 @@ public class GridSquare : MonoBehaviour
             var path = pathSquare.GetComponentInParent<Path>();
             if (path != null)
             {
-                var costComp = GameObject.FindObjectOfType<Cost_Value>();
-                if (costComp != null)
+                var pathStorage = GameObject.FindObjectOfType<PathStorage>();
+                if (pathStorage != null)
                 {
-                    int perSquareCost = 0;
-                    if (path.CurrentPathData != null)
-                        perSquareCost = Mathf.Max(0, path.CurrentPathData.costValue);
-                    if (costComp.currentCost + perSquareCost > costComp.maxCost)
+                    if (!pathStorage.CanAfford(path))
                     {
                         // cannot select this square because it would exceed max cost
                         return;
@@ -116,13 +113,10 @@ public class GridSquare : MonoBehaviour
             var path = pathSquare.GetComponentInParent<Path>();
             if (path != null)
             {
-                var costComp = GameObject.FindObjectOfType<Cost_Value>();
-                if (costComp != null)
+                var pathStorage = GameObject.FindObjectOfType<PathStorage>();
+                if (pathStorage != null)
                 {
-                    int perSquareCost = 0;
-                    if (path.CurrentPathData != null)
-                        perSquareCost = Mathf.Max(0, path.CurrentPathData.costValue);
-                    if (costComp.currentCost + perSquareCost > costComp.maxCost)
+                    if (!pathStorage.CanAfford(path))
                     {
                         // cannot select this square because it would exceed max cost
                         return;

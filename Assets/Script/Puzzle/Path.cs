@@ -51,6 +51,21 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
         return false;
     }
 
+    public void ResetForReplay()
+    {
+        StopAllCoroutines();
+        _transform.localPosition = _startPosition;
+        _transform.localScale = _pathStartScale;
+        _pathActive = true;
+        _blockedByObstacle = false;
+
+        if (CurrentPathData != null)
+        {
+            // Rebuild the visual path so only the required squares are active.
+            CreatePath(CurrentPathData);
+        }
+    }
+
     public void DeactivatePath()
     {
         if (_pathActive)
@@ -115,8 +130,16 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
                 {
                     var shiftOnX = GetXPositionForPathSquare(pathData, column, moveDistance);
                     var shiftOnY = GetYPositionForPathSquare(pathData, (pathData.rows - 1) - row, moveDistance);
-                    _currentPath[currentSquareIndexInList].gameObject.SetActive(true);
-                    _currentPath[currentSquareIndexInList].gameObject.transform.localPosition = new Vector2(shiftOnX, shiftOnY);
+                    var pathSquareObject = _currentPath[currentSquareIndexInList];
+                    pathSquareObject.transform.localPosition = new Vector2(shiftOnX, shiftOnY);
+
+                    // DeactivatePath disables the collider. Re-enable it when rebuilding
+                    // the path so it can be dragged and detected after a reset.
+                    var pathSquare = pathSquareObject.GetComponent<PathSquare>();
+                    if (pathSquare != null)
+                        pathSquare.ActivatePath();
+                    else
+                        pathSquareObject.SetActive(true);
 
                     currentSquareIndexInList++;
                 }
@@ -268,6 +291,22 @@ public class Path : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeg
     public void OnBeginDrag(PointerEventData eventData)
     {
         _blockedByObstacle = false;
+
+        var pathStorage = FindObjectOfType<PathStorage>();
+        if (pathStorage != null)
+            pathStorage.SelectPath(this);
+
+        // Clear collision indicators left from the previous attempt or a reset.
+        foreach (var square in _currentPath)
+        {
+            if (square == null) continue;
+
+            var pathSquare = square.GetComponent<PathSquare>();
+            if (pathSquare != null)
+                pathSquare.SetUnoccupied();
+        }
+
+        _pathActive = true;
         this.GetComponent<RectTransform>().localScale = pathSelectedScale;
     }
 

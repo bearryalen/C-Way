@@ -11,6 +11,8 @@ public class Game_Event : MonoBehaviour
 
     public static Action RequestNewPath;
 
+    public static Action PlayerReachedDestination;
+
     public static Action<int> CostValue;
 
 }

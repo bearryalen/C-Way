@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92ef88e477f27b14e9a94d4709ac8029, type: 3}
+  m_Name: Level 12
+  m_EditorClassIdentifier: Assembly-CSharp::GridLevel
+  columns: 6
+  rows: 6
+  board:
+  - columns: 000000000000
+  - columns: 000100000000
+  - columns: 000000000000
+  - columns: 000000000000
+  - columns: 000000000100
+  - columns: 000000000000
+  startPoint: {x: 1, y: 4}
+  endPoint: {x: 4, y: 1}
+  obstaclePoints:
+  - {x: 1, y: 2}
+  - {x: 2, y: 3}
+  - {x: 3, y: 4}
+  - {x: 4, y: 1}
+  - {x: 5, y: 3}

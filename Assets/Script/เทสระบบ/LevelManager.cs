@@ -8,6 +8,8 @@ public class LevelManager : MonoBehaviour
 
     [Header("Level Data")]
     [SerializeField] private LevelStorage levelStorage;
+    [SerializeField] private LevelSequence levelSequence;
+    [SerializeField] private int levelIndex;
     [SerializeField] public GridLevel gridLevel;
     public GameObject areaPointImage;
     public GameObject playerPrefab;
@@ -115,11 +117,13 @@ public class LevelManager : MonoBehaviour
     private void OnEnable()
     {
         Game_Event.checkIfPathCanBePlace += CheckIfPathCanBePlaced;
+        Game_Event.PlayerReachedDestination += LoadNextLevel;
     }
 
     private void OnDisable()
     {
         Game_Event.checkIfPathCanBePlace -= CheckIfPathCanBePlaced;
+        Game_Event.PlayerReachedDestination -= LoadNextLevel;
     }
 
     private void CheckIfPathCanBePlaced()
@@ -138,6 +142,13 @@ public class LevelManager : MonoBehaviour
             }
         }
         //เช็คว่าจำนวนช่องที่เลือกตรงกับจำนวนช่องของ path หรือไม่ ถ้าไม่ตรงก็ให้ย้าย path กลับไปที่ตำแหน่งเริ่มต้น
+        if (pathStorage == null)
+        {
+            Debug.LogError("LevelManager: PathStorage is not assigned.", this);
+            Game_Event.MovePathToStartPosition?.Invoke();
+            return;
+        }
+
         var currentSelectedPath = pathStorage.GetCurrentSelectedPath();
         if (currentSelectedPath == null) return; //there is no path selected, so we cannot place it
 
@@ -149,18 +160,10 @@ public class LevelManager : MonoBehaviour
 
         if (currentSelectedPath.TotalSquareNumber == squareIndexs.Count)
         {
-            // Check cost limit before placing
-            var costComp = GameObject.FindObjectOfType<Cost_Value>();
-            int totalCostToAdd = 0;
-            if (currentSelectedPath != null && currentSelectedPath.CurrentPathData != null)
-            {
-                totalCostToAdd = currentSelectedPath.TotalSquareNumber * Mathf.Max(0, currentSelectedPath.CurrentPathData.costValue);
-            }
-
-            if (costComp != null && costComp.currentCost + totalCostToAdd > costComp.maxCost)
+            if (!pathStorage.CanAfford(currentSelectedPath))
             {
                 // Exceeds budget, reject placement and move path back
-                Game_Event.MovePathToStartPosition();
+                Game_Event.MovePathToStartPosition?.Invoke();
                 return;
             }
 
@@ -170,10 +173,11 @@ public class LevelManager : MonoBehaviour
 
             }
 
-            // Update cost
-            if (costComp != null && totalCostToAdd > 0)
+            // Update cost after the path has been successfully placed
+            if (!pathStorage.TryAddPathCost(currentSelectedPath))
             {
-                costComp.ValueChange(totalCostToAdd);
+                Game_Event.MovePathToStartPosition?.Invoke();
+                return;
             }
 
             currentSelectedPath.DeactivatePath();
@@ -257,17 +261,74 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log("Level Complete! Start and End are connected.");
 
-        // Example: make other paths inactive / request next path — optional, adjust to your flow
+        // Stop the placed path before starting the player's walk.
         Game_Event.SetPathInactive?.Invoke();
-        Game_Event.RequestNewPath?.Invoke();
 
-        if (playerPrefab != null && currentPlayer == null)
+        if (currentPlayer == null)
         {
-            currentPlayer = Instantiate(playerPrefab, transform);
-            var playerComp = currentPlayer.GetComponent<Player>();
-            if (playerComp != null) playerComp.Initialize(this);
+            var scenePlayer = FindObjectOfType<Player>();
+            if (scenePlayer != null)
+                currentPlayer = scenePlayer.gameObject;
+            else if (playerPrefab != null)
+                currentPlayer = Instantiate(playerPrefab, transform);
         }
-        Game_Event.RequestNewPath?.Invoke(); // remains to trigger movement if you use the event
+
+        if (currentPlayer != null)
+        {
+            var playerComp = currentPlayer.GetComponent<Player>();
+            if (playerComp != null)
+            {
+                playerComp.Initialize(this);
+                currentPlayer.SetActive(true);
+            }
+        }
+
+        Game_Event.RequestNewPath?.Invoke();
+    }
+
+    public void LoadNextLevel()
+    {
+        if (levelSequence == null || levelIndex + 1 >= levelSequence.Count)
+        {
+            Debug.Log("All levels completed.");
+            return;
+        }
+
+        levelIndex++;
+        var nextLevel = levelSequence.GetLevel(levelIndex);
+        if (nextLevel == null || !nextLevel.IsValid())
+        {
+            Debug.LogError("LevelManager: The next LevelStorage is not configured.", this);
+            return;
+        }
+
+        if (pathStorage != null)
+            pathStorage.ResetPaths();
+
+        foreach (var square in _gridSquare)
+        {
+            if (square != null)
+                Destroy(square);
+        }
+        _gridSquare.Clear();
+
+        levelStorage = nextLevel;
+        ApplyLevelStorage();
+        CreateGrid();
+
+        if (pathStorage != null)
+            pathStorage.InitializePaths();
+
+        var player = currentPlayer != null
+            ? currentPlayer.GetComponent<Player>()
+            : FindObjectOfType<Player>();
+        if (player != null)
+        {
+            player.Initialize(this);
+            player.gameObject.SetActive(true);
+            player.transform.SetAsLastSibling();
+            player.ResetToStart();
+        }
     }
 
     void Start()
@@ -281,12 +342,63 @@ public class LevelManager : MonoBehaviour
         }
 
         CreateGrid();
+
+        // Use the Player already in the scene when available. Do not create a
+        // second player clone when the first level is completed.
+        if (currentPlayer == null)
+        {
+            var scenePlayer = FindObjectOfType<Player>();
+            if (scenePlayer != null)
+            {
+                currentPlayer = scenePlayer.gameObject;
+                scenePlayer.Initialize(this);
+            }
+        }
     }
 
     private void CreateGrid()
     {
         SpawnGridSquare(gridLevel);
         SetGridSquarePosition(gridLevel);
+    }
+
+    public void ResetGameplay()
+    {
+        StopAllCoroutines();
+
+        if (pathStorage != null)
+        {
+            pathStorage.ResetPaths();
+            pathStorage.ResetCost();
+        }
+
+        foreach (var squareObject in _gridSquare)
+        {
+            var square = squareObject.GetComponent<GridArea>();
+            if (square == null) continue;
+
+            square.Selected = false;
+            square.isOccupied = false;
+
+            if (square.isObstacle)
+            {
+                square.SetObstacle();
+            }
+            else
+            {
+                square.hooverImage.gameObject.SetActive(false);
+                square.activeImage.gameObject.SetActive(false);
+            }
+        }
+
+        // Restore the endpoint cells after clearing normal path occupancy.
+        int startRow = Mathf.Clamp(Mathf.RoundToInt(gridLevel.startPoint.y), 0, gridLevel.rows - 1);
+        int startColumn = Mathf.Clamp(Mathf.RoundToInt(gridLevel.startPoint.x), 0, gridLevel.columns - 1);
+        int endRow = Mathf.Clamp(Mathf.RoundToInt(gridLevel.endPoint.y), 0, gridLevel.rows - 1);
+        int endColumn = Mathf.Clamp(Mathf.RoundToInt(gridLevel.endPoint.x), 0, gridLevel.columns - 1);
+
+        _gridSquare[startRow * gridLevel.columns + startColumn].GetComponent<GridArea>().AreaActive(0);
+        _gridSquare[endRow * gridLevel.columns + endColumn].GetComponent<GridArea>().AreaActive(1);
     }
 
     public void SpawnGridSquare(GridLevel gridLevel)
